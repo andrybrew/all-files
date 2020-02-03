@@ -1,0 +1,155 @@
+---
+title: "Regression"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Regresi Linear
+
+Analisis regresi merupakan metode untuk menentukan hubungan sebab-akibat antara satu variabel dengan variabel(-variabel) yang lain. Analisis regresi dipakai secara luas untuk melakukan prediksi dan ramalan, memahami variabel bebas mana saja yang berhubungan dengan variabel terikat, dan lain sebagainya Variabel yang mempengaruhi sering disebut sebagai variabel independen. Variabel yang dipengaruhi sering disebut dengan variabel dependen.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("readr") # membaca file
+install.packages("ggplot2") # visualisasi data
+install.packages("here") # mengetahui direktori
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(readr)
+library(ggplot2)
+library(here)
+```
+
+### Mengetahui Direktori
+
+```{r eval=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+### Import Data
+
+```{r}
+# Mengimport data
+df.salary <- read_csv(here("data", "raw", "regression_salary.csv"))
+```
+
+Data ini berisi empat variabel yaitu lamanya bekerja (yearsexperience), skor ketidakhadiran (absencescore), skor kegagalan (failurescore), dan jumlah gaji (salary).
+
+Data "regression_salary.csv" diimpor sebagai tabel bernama "df.salary".
+
+Pada pekerjaan kali ini, kita akan memodelkan regresi, memprediksi data baru, hingga menyimpan hasil.
+
+### Eksplorasi Data
+
+Data yang telah diimpor selanjutnya dieksplorasi untuk mengetahui strukturnya.
+
+```{r}
+# Melihat attribute dan struktur data
+names(df.salary) # menampilkan nama kolom
+dim(df.salary) # menampilkan dimensi tabel
+head(df.salary) # menampilkan beberapa data teratas
+str(df.salary) # menampilkan struktur data
+summary(df.salary) # menampilkan rangkuman data
+
+# Mengetahui jumlah data kosong
+sum(is.na(df.salary))
+```
+
+Selain itu, data "df.salary" juga dapat dieksplore sebarannya dengan perintah sebagai berikut.
+
+```{r}
+# Visualisasi data
+pairs(df.salary)
+```
+
+### Memodelkan Regresi Linear
+
+Dalam praktek kali ini kita akan membuat model regresi linear untuk memprediksi salary berdasarkan yearsexperience, absencescore, dan failurescore. 
+Model regresi linier dinyatakan dengan perintah
+lm([dependent variable] ~ [independent variable 1] + [independent variable 2] + [dst], data = df)
+
+```{r}
+# Membuat model
+lm.salary <- lm(salary ~  yearsexperience + absencescore + failurescore, data = df.salary)
+
+# Menampilkan model regresi
+lm.salary
+```
+
+Luaran dari perintah ini yaitu menampilkan intercept dan coefficient dari model regresi "lm.salary".
+
+```{r}
+# Melihat hasil anova
+anova(lm.salary)
+```
+
+```{r}
+# Melihat summary model
+summary(lm.salary)
+```
+
+### Residual
+
+Salah satu cara untuk menguji kualitas kesesuaian model regressi adalah dengan melihat nilai residual atau perbedaan antara nilai riil dan nilai prediksi. Model yang bagus memiliki nilai residu yang kecil (mendekati nol). 
+
+```{r}
+# Menghitung residual
+residuals <- residuals(lm.salary)
+
+# Menampilkan residual
+residuals
+
+# diagnostic plot
+plot(lm.salary, pch = 16, col = "blue")
+```
+
+Plot residuals vs fitted menunjukkan perbandingan residu dengan nilai fitted, dalam plot tersebut,residu mewakili jarak vertikal dari satu titik ke garis regresi. Jika semua titik berada tepat di garis regresi, semua residu akan berada tepat di garis abu-abu putus-putus. Garis merah di dalam plot adalah kurva yang berhubungan dengan residu. Jika semua titik berada tepat di garis regresi, posisi garis merah harus sama persis dengan garis abu-abu bertitik.
+
+Plot normal Q-Q menunjukkan normal residual. Plot ini memverifikasi asumsi bahwa residu terdistribusi normal. Jadi, jika residu terdistribusi normal, mereka seharusnya terletak tepat di garis putus-putus abu-abu.
+
+Plot scale-location digunakan untuk mengukur akar kuadrat dari residu terstandarisasi terhadap nilai fitted. Oleh karena itu, jika semua titik terletak pada garis regresi, nilai y harus mendekati nol. Karena diasumsikan bahwa varians residu tidak mengubah distribusi secara substansial, jika asumsinya benar, garis merah harus relatif datar.
+
+Plor residuals vs leverage menunjukkan perbadingan residu standar dengan leverage. Leverage adalah pengukuran tentang bagaimana setiap titik data mempengaruhi regresi. Ini adalah pengukuran jarak dari pusat massa regresi dan tingkat isolasi (diukur dengan apakah ia memiliki tetangga). Selain itu, kita dapat melihat cook's distance, yang dipengaruhi oleh leverage tinggi dan residu besar. Kita dapat menggunakan ini untuk mengukur bagaimana regresi akan berubah jika satu titik dihapus. Garis merah halus berkenaan dengan residu standar. Untuk regresi sempurna, garis merah harus dekat dengan garis putus-putus tanpa poin lebih dari 0,5 dalam jarak Cook.
+
+### Prediksi
+
+Membuat daftar data salary baru yang akan diprediksi.
+
+```{r}
+# Membuat data yang akan diprediksi
+df.newsalary <- read_csv(here("data", "raw", "regression_salary_predict.csv"))
+
+# Memasukkan dilai kedalam model
+lm.pred <- predict(lm.salary, df.newsalary)
+
+# Menampilkan hasil prediksi
+lm.pred
+
+# Menampilkan hasil prediksi dalam bentuk tabel
+df.pred <- data.frame(df.newsalary,lm.pred)
+View(df.pred)
+```
+
+## Save Prediction
+
+Menyimpan hasil prediksi menjadi sebuah file excel.
+
+```{r}
+# Memnyimpan hasil prediksi
+write_csv(df.pred, here("data", "processed", "predicted_salary.csv"))
+```
+

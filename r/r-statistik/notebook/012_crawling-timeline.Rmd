@@ -1,0 +1,82 @@
+---
+title: "Crawling Timeline"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Sebelum mengambil data dari Twitter, pastikan telah memiki kode API.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("rwteet") # mengambil data dari Twitter
+install.packages("here") # set direktori
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(rtweet)
+library(here)
+```
+
+### Set Directory
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+
+### Menentukan Spesifikasi Tweets yang Akan Diambil
+
+```{r}
+# Menentukan nama akun
+namaakun <- "Nama Akun"
+
+# Menentukan jumlah tweet
+jumlahtweet <- 1000
+```
+
+### Autentifikasi
+
+Mendapatkan akses pengambilan Tweets menggunakan kode API yang sudah diperoleh.
+
+```{r}
+# Autentifikasi
+token <- create_token(
+  app = "New Research Methodology",
+  consumer_key = "Masukkan Consumer Key",
+  consumer_secret = "Masukkan Consumer Secret",
+  access_token = "Masukkan Access Token",
+  access_secret = "Masukkan Access Secret"
+)
+```
+
+### Mengambil Tweets
+
+```{r eval=FALSE, include=TRUE}
+# Crawling data
+crawling.timeline <- get_timelines(c(namaakun, n = jumlahtweet))
+users_data(crawling.timeline)
+
+# Melihat hasil crawling
+View(crawling.timeline)
+```
+
+### Menyimpan Hasil Crawling
+
+```{r eval=FALSE, include=TRUE}
+# Menyimpan data Tweets
+write_as_csv(crawling.timeline, here("data", "temporary", "hasil-crawling_timeline.csv"), 
+             prepend_ids = TRUE, na = "", fileEncoding = "UTF-8")
+```

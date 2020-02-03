@@ -1,0 +1,146 @@
+---
+title: "Logistic Regression"
+author: "Dian Ramadhani"
+date: "08/01/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Logistic Regression
+
+Regresi logistik adalah model prediksi seperti halnya regresi linear, namun dengan variabel terikat berskala dikotomi.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("readr") # membaca file
+install.packages("here") # menampilkan direktori
+install.packages("tidyverse") # manipulasi data
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(readr)
+library(here)
+library(tidyverse)
+```
+
+### Menampilkan Direktori
+
+```{r eval=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+### Import Data
+
+```{r}
+# Mengimport data
+df.insurance <- read_csv(here("data", "raw", "logreg_insurance.csv"))
+```
+
+Data yang digunakan yaitu data asuransi. Data ini berisi tentang profil calon konsumen perusahaan asuransi dan keputusan pengambilan asuransi yang diambil masing masing orang.
+
+### Eksplorasi Data
+
+Data yang telah diimpor selanjutnya dieksplorasi untuk mengetahui strukturnya.
+
+```{r}
+# Melihat attribute dan struktur data
+names(df.insurance) # menampilkan nama kolom
+dim(df.insurance) # menampilkan dimensi tabel
+head(df.insurance) # menampilkan beberap data teratas
+str(df.insurance) # menampilkan struktur data
+summary(df.insurance) # menampilkan rangkuman data
+
+# Mengetahui jumlah data kosong
+sum(is.na(df.insurance))
+```
+
+### Mengubah Data Char menjadi Angka
+
+Kita akan menggunakan fungsi glm() dir r dimana hanya menerima input berupa numerik, sehingga target variable yang pada awalnya No dan Yes harus dirubah menjadi 0 dan 1. 
+
+```{r}
+# Mengubah target Variable ke 0 dan 1  (No = 0, Yes = 1)
+df.insurance2 <- df.insurance %>%
+  mutate(Claim = ifelse(Claim == "No", 0, 1))
+```
+
+### Membagi Data
+
+Dalam regresi logistik, data dibagi menjadi dua yaitu data train untuk membuat model dan data test untuk menguji akurasi model. Biasanya data dibagi dengan proporsi 70% train dan 30% test.
+
+```{r}
+# Membangi data
+split <- sample(1:nrow(df.insurance2), 0.7 * nrow(df.insurance2))
+
+# Membuat tabel data train
+df.train <- df.insurance2[split, ]
+
+# Membut tabel data test
+df.test <- df.insurance2[-split, ]
+```
+
+### Model Building
+
+```{r}
+# Membuat model regresi logistik
+reglog <- glm(Claim ~ ., data = df.train)
+
+# Melihat hasil model regresi logistik
+reglog
+
+summary(reglog)
+```
+
+### Validasi
+
+```{r}
+# Memprediksi data test
+pred.log <- predict(reglog, df.test)
+
+# Menentukan cut off
+cutoff <- 0.5
+pred.log.class <- ifelse(pred.log > cutoff, 1, 0)
+
+# Menampilkan hasil prediksi
+pred.log.class
+
+# Melihat prediksi dalam bentuk tabel
+df.pred.log <- data.frame(df.test, pred.log.class)
+View(df.pred.log)
+```
+
+```{r}
+# Confussion matrix
+conf.log <- table(df.test$Claim, pred.log.class)
+conf.log
+
+# Megambil angka TP, FN, FP, TN
+TP.log <- conf.log[1, 1]
+FN.log <- conf.log[1, 2]
+FP.log <- conf.log[2, 1]
+TN.log <- conf.log[2, 2]
+
+# Menghitung nilai akurasi
+acc.log <- (TP.log + TN.log) / (TP.log + FN.log + FP.log + TN.log)
+acc.log
+
+# Menghitung nilai presisi
+prec.log <- TP.log / (TP.log + FP.log)
+prec.log
+
+# Menghitung Nilai Recall
+rec.log <- TP.log / (TP.log + FN.log)
+rec.log
+```
+

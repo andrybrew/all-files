@@ -1,0 +1,107 @@
+---
+title: "Association Rules"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Association Rules
+
+Association rules merupakan suatu metode data mining yang bertujuan untuk mencari sekumpulan items yang sering muncul bersamaan.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("readr") # membaca file
+install.packages("here") # menampilkan direktori
+install.packages("arules") # algoritma asosiasi
+install.packages("arulesViz") # visualisasi asosiasi
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(here)
+library(arules)
+library(arulesViz)
+```
+
+### Menampilkan Direktori
+
+```{r eval=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+### Import Data
+
+Data yang digunakan kali ini yaitu dataset Groceries yang telah tersedia di package arules
+
+```{r}
+# Mengimport data bawaan dari package arules
+data(Groceries)
+
+# Melihat Contoh 6 Data Transaksi
+inspect(head(Groceries))
+```
+
+Data ini merupakan daftar barang - barang yang dibelanjakan oleh konsumen dalam satu transaksi. Melalui data ini, dapat diketahui barang - barang apa saja yang sering dibeli secara bersamaan oleh konsumen.
+
+### Frequent Itemset
+
+Mencari itemset yang dianggap sering muncul.
+
+```{r}
+# Menampilkan attribute dan struktur data
+freq.itemset <- apriori(Groceries, 
+                        parameter = list(minlen = 1, 
+                                         maxlen = 1, 
+                                         target = "frequent itemsets", 
+                                         support = 0.002))
+
+# Menampilkan summary frequent itemset
+summary(freq.itemset)
+
+# Menampilkan 10 data dengan nilai support tertinggi
+inspect(head(sort(freq.itemset, by = "support"), 10))
+```
+
+### Membuat Rules
+
+Data yang dianggap sering muncul kemudian digunakan untuk membuat rules
+
+```{r}
+# Membuat rules
+rules <- apriori(Groceries, parameter = list(support = 0.002, confidence = 0.6))
+
+# Menampilkan summary rules
+summary(rules)
+
+# Menampilkan 5 data dengan nilai lift tertinggi
+inspect(head(sort(rules, by = "lift"), 5))
+```
+
+### Visualisasi Rules
+
+```{r}
+# Visualisasi rules
+toprules <- head(sort(rules, by = "lift"), 5)
+plot(toprules, method = "graph", control = list(type = "items"))
+```
+
+### Simpan Rules
+
+```{r eval=FALSE, include=TRUE}
+# Simpan rules dalam bentuk Excel
+df <- as(rules, "data.frame")
+write_csv(df, here("data", "processed", "association_rules.csv"))
+```
+

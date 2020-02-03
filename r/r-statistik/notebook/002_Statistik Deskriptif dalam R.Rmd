@@ -1,0 +1,279 @@
+---
+title: "Statistik Deskriptif dalam R"
+author: "M. Rizqy Dwi Putra"
+date: "07/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Memplot Data dalam R (Scatter Plot)
+Misalkan diberikan data seperti pada Gambar 3.1. Berdasarkan Gambar 3.1, diketahui terdapat 10 responden laki-laki dan 10 responden perempuan. Masing-masing responden disajikan informasi mengenai pendapatan dan pengeluaran per-bulan, dalam jutaan. Sebagai contoh, responden ke-1 adalah laki-laki, dengan pendapatan Rp. 1.000.000, dan pengeluaran Rp. 500.000. Responden ke-20 adalah perempuan, dengan pendapatan Rp. 10.000.000, dan pengeluaran Rp. 8.000.000.
+
+```{r}
+data1 = read.table("data1.csv",header=TRUE, sep=",")
+```
+
+File tidak bisa dibuka karena dokumen tidak berada dalam direktori yang sama dengan R Markdown. Untuk itu kita perlu mengspesifikasikan lokasi file dengan cara berikut
+
+1. Install Package here
+```{r}
+install.packages("here")
+```
+
+2. Aktifkan Paket here
+```{r}
+library(here)
+```
+
+3. Sesuaikan
+```{r}
+data1 = read.table(here("data", "raw", "data1.csv"), header=TRUE, sep=",")
+data1
+```
+
+Code untuk membuat scatterplot
+```{r}
+plot(data1[2:3], main="Pendapatan dan Pengeluaran per-Bulan, dalam Jutaan Rupiah")
+```
+
+Anda juga dapat memanfaatkan paket ggplot
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+```
+
+```{r}
+PENDAPATAN=data1$pendapatan
+PENGELUARAN=data1$pengeluaran
+JENIS=data1$jeniskelamin
+
+qplot(PENDAPATAN, PENGELUARAN, main="Pendapatan dan Pengeluaran per-Bulan, dalam Jutaan", xlab="Pendapatan per-Bulan", ylab="Pengeluaran per-Bulan", color=JENIS, shape = JENIS)
+```
+
+# Menyajikan Data dengan Grafik Garis
+
+```{r}
+#import data
+library(here)
+here()
+data2 <- read.table(here("data", "raw","data2.csv"),header=TRUE, sep=",")
+data2
+```
+
+
+```{r}
+tahun=data2$tahun
+jumlaha=data2$jenis.barang.A
+jumlahb=data2$jenis.barang.B
+jumlahc=data2$jenis.barang.C
+
+jumlaha
+jumlahb
+jumlahc
+```
+
+
+```{r}
+total=jumlaha
+plot(tahun, total, type="o", col="red", ylim=c(40,180), lty=21)
+lines(tahun, jumlahb, type = "o", col="blue")
+lines(tahun, jumlahc, type = "o", col="green")
+legend(2001, 170,c("Jenis Barang A", "Jenis Barang B", "Jenis Barang C"), cex=0.8, col=c("red", "blue", "green"),
+       lty=21)
+```
+
+# Menyajikan Data dengan Grafik Batang
+```{r}
+barplot(jumlaha,tahun, main="Penjualan Barang Jenis A dari Tahun 2001-2007", xlab="tahun", ylab="jumlah barang yang terjual", names.arg = c("2001", "2002", "2003", "2004", "2005", "2006", "2007"))
+```
+
+
+# Menyajikan Data dengan Diagram Lingkaran
+```{r}
+#Import Data
+library(here)
+here()
+data3 <- read.table(here("data", "raw","data3.csv"), header = TRUE, sep = ",")
+data3
+```
+
+```{r}
+pie(data3$Jumlah, labels = data3$Jumlah, main="Data Penjualan Produk A, B, C, dan D", col=heat.colors(4))
+colors=heat.colors(4)
+legend(1,0.5, c("Produk A", "Produk B", "Produk C", "Produk D"), cex = 0.8, fill=colors)
+```
+
+
+# Membuat Grafik dengan Histogram
+```{r}
+data4 <- read.table(here("data", "raw","data4.csv"), header = TRUE, sep = ",")
+data4
+```
+
+```{r}
+skor=data4$IQ
+hist(skor, col = "lightblue", ylim = c(0,40), main = "contoh histogram", ylab = "frekuensi", breaks=c(90,95,100,105,110,115,120), xlab = "score")
+```
+
+# Handling Missing Value
+
+```{r}
+library(here)
+miss <- read.csv(here("data", "raw", "latihan missing.csv"), header = TRUE, sep = ",")
+any(is.na(miss))
+miss
+```
+
+```{r}
+install.packages("mice")
+library(mice)
+```
+
+```{r}
+md.pattern(miss)
+
+```
+
+```{r}
+# Delete Missing Value
+deletemv <- na.omit(miss)
+deletemv
+```
+
+```{r}
+# Impute
+library(Hmisc)
+imputemean <- impute(miss$Matematika, mean)  # replace with mean
+imputemedian <- impute(miss$Matematika, median)  # median
+
+miss$Matematika <- imputemean
+miss
+```
+
+
+# Ukuran Gejala Pusat, Letak, Pancaran, Kemiringan dan Keruncingan
+
+```{r}
+data5 = read.table(here("data", "raw", "data5.csv"), head = TRUE, sep = ",")
+data5
+
+data_a = data5$A #data_a menyimpan data5 kolom A
+data_aa = na.omit(data_a) #data_aa menyimpan data5, tanpa NA
+data_b=data5$B #menyimpan data5 kolom B
+data_bb=na.omit(data_b) #data_bb menyimpan data5, tanpa NA
+data_c=data5$C #data_c menyimpan data5
+data_cc=na.omit(data_c) #data_cc menyimpan data5, tanpa NA
+
+data_a
+data_aa
+data_b
+data_bb
+data_c
+data_cc
+```
+
+
+```{r}
+install.packages("psych")
+library(psych)
+```
+
+```{r}
+describe(data_aa)
+describe(data_bb)
+describe(data_cc)
+```
+
+```{r}
+install.packages("pastecs")
+library(pastecs)
+```
+
+```{r}
+stat.desc(data_aa)
+stat.desc(data_bb)
+stat.desc(data_cc)
+```
+
+
+# Uji Normalitas Populasi dengan Uji Kolmogorov Smirnov
+
+
+```{r}
+install.packages("nortest")
+library(nortest)
+```
+
+```{r}
+normalitas = read.csv(here("data", "raw", "data6.csv"), header = TRUE, sep = ",")
+x = normalitas$Data
+
+#Berikut akan digunakan pendekatan uji Kolmogorov-Smirnov untuk menguji hipotesis apakah data tersebut ditarik dari populasi yang berdistribusi normal atau tidak (misalkan tingkat signifikansi yang digunakan 𝛼=5%).
+
+#Nilai kritis Kolmogorov-Smirnov pada tingkat signifikansi 5% dan jumlah elemen sampel 16 berdasarkan tabel distribusi Kolmogorov-Smirnov adalah 0,327
+
+summary(normalitas)
+lillie.test(x)
+```
+
+
+Uji Normalitas Populasi dengan Quantile-Quantile Plot
+```{r}
+qqnorm(x)
+qqline(x)
+```
+
+
+
+# Uji kesamaan varians populasi dengan uji levene
+```{r}
+varians <- read.csv(here("data", "raw", "data7.csv"), header = TRUE, sep = ",")
+varians
+```
+
+
+```{r}
+install.packages("car")
+install.packages("lawstat")
+
+```
+
+```{r}
+#Berikut akan digunakan pendekatan uji Levene untuk menguji apakah asumsi populasi 𝑋, 𝑌, dan 𝑍 memiliki varians yang sama (secara statistika), dapat diterima atau tidak, pada tingkat signifikansi 5%.
+
+# Derajat bebas pembilang = k-1
+# Derajat bebas penyebut = N-1
+df1 = 3-1
+df1
+
+df2 = 18-3
+df2
+
+nilai_F = qf(0.95, df1, df2)
+nilai_F
+
+library(car)
+leveneTest(varians$Nilai, varians$Kelas)
+
+library(lawstat)
+
+levene.test(varians[,"Nilai"], varians[,"Kelas"], location = "median", correction.method = "zero.correction")
+```
+
+# UJI KESAMAAN RATA-RATA DARI DUA POPULASI UNTUK DATA BERPASANGAN DAN SALING BERHUBUNGAN (UJI t)
+
+```{r}
+#Peneliti akan menguji apakah terdapat pengaruh yang signifikan secara statistika dalam hal jumlah denyut jantung yang terjadi dalam satu menit, sebelum dan sesudah mengkonsumsi obat 𝐴 pada tingkat signifikansi 𝛼=5%.
+
+data7 = read.csv(here("data", "raw", "data8.csv"), header = TRUE, sep = ",")
+data7
+
+t.test(data7$Y, data7$X, paired = TRUE)
+
+#Nilai kritis 𝑡 dengan derajat bebas 8 dan tingkat signifikansi 5% adalah ±2,306
+```
+

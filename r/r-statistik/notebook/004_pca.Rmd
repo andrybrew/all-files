@@ -1,0 +1,99 @@
+---
+title: "Principal Component Analysis"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Principal Component Analysis
+
+Analisis Komponen Utama (Principal Component Analysis) adalah analisis multivariate yang mentransformasi variabel-variabel asal yang saling berkorelasi menjadi variabel-variabel baru yang tidak saling berkorelasi dengan mereduksi sejumlah variabel sehingga mempunyai dimensi yang lebih kecil namun dapat menerangkan sebagian besar keragaman variabel aslinya.
+
+Di praktek kali ini,  kita akan mencoba PCA menggunakan dataset yang sederhana dan mudah dipahami yaitu dataset "mtcars" yang telah disediakan oleh R. Dataset ini terdiri dari data 32 model mobil, yang diambil dari American motoring magazine (1974 Motor Trend magazine). Setiap mobil memiliki 11 fitur yang dinyatakan dalam berbagai unit.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("factoextra") # visualisasi plot pca
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(factoextra)
+```
+
+### Import Data
+
+Dataset kali ini telah disediakan oleh R. Data berjudul "mtcars" dapat digunakan dengan perintah berikut.
+
+```{r}
+# Mengimport data
+data(mtcars)
+```
+
+data "mtcars" diimpor menjadi tabel bernama "mtcars"
+
+### Eksplorasi Data
+
+Data yang telah diimpor selanjutnya dieksplorasi untuk mengetahui strukturnya.
+
+```{r}
+# Melihat attribute dan struktur data
+names(mtcars) # menampilkan nama kolom
+dim(mtcars) # menampilkan dimensi tabel
+head(mtcars) # menampilkan beberapa data teratas
+str(mtcars) # menampilkan struktur data
+summary(mtcars) # menampilkan rangkuman data
+
+# Mengetahui jumlah data kosong
+sum(is.na(mtcars))
+```
+
+Kita akan mengecualikan dua variabel kategorik dalam bentuk biner (0 dan 1) pada tabel "mtcars" yaitu variable "vs" dan "am". Data baru tanpa kedua variabel kategorik tersebut kemudian dijadikan tabel dengan nama "df.mtcars".
+
+```{r}
+# Memilih data 
+df.mtcars <- subset(mtcars, select = -c(vs, am)) 
+View(df.mtcars)
+```
+
+### Membuat Model PCA
+
+Model PCA diterapkan pada tabel "df.mtcars" dan model diberi nama "pca".
+
+```{r}
+# Membuat model PCA
+pca <- prcomp(df.mtcars, scale = TRUE)
+
+# Menampilkan model PCA
+pca
+```
+
+Output dari pemodelan "PCA" yaitu standar deviasi dan korelasi antara kesembilan komponen (atau variabel) di dalam tabel "df.mtcars".
+
+```{r}
+# Menampilkan summary model PCA
+summary(pca)
+```
+
+Rangkuman pemodelan PCA berisi informasi tentang standar deviasi, proporsi varians, dan proporsi kumulatif dari kesembilan komponen (atau variabel) di dalam tabel "df.mtcars".
+
+Melalui informasi proporsi varians, dapat diketahui bahwasannya principal component 1 mampu mewakili 62.8% dari total varians sedangkan principal component 2 mampu mewakili sebesar 23.1% dari total varians.
+
+Melalui informasi proporsi kumulatif, dapat diketahui bahwasannya dengan menggunakan 1 principal component, kita sudah dapat mewakili sebesar 62.8% dari total varians, sedangkan ketika menggunakan principal component 1 dan 2, kita sudah dapat mewakili sebesar 85.9% dari total varians.
+
+```{r}
+# Visualisasi scree plot PCA
+fviz_eig(pca)
+```
+
+Plot ini menampilkan informasi yang sama dengan informasi proporsi varians.

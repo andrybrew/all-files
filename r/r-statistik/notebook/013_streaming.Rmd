@@ -1,0 +1,87 @@
+---
+title: "Streaming"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Sebelum mengambil data dari Twitter, pastikan telah memiki kode API.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("rwteet")     # mengambil data dari Twitter
+install.packages("here")       # set direktori
+```
+
+### Import Library
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(rtweet) 
+library(here)
+```
+
+### Set Directory
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+### Menentukan Spesifikasi Tweets yang Akan Diambil
+
+```{r}
+# Menentukan keyword
+keyword <- "Keyword"
+
+# Menentukan jumlah tweet
+jumlahtweet <- 1000
+
+# Menentukan pengambilan retweet
+retweet <- TRUE
+```
+
+### Autentifikasi
+
+Mendapatkan akses pengambilan Tweets menggunakan kode API yang sudah diperoleh.
+
+```{r}
+#Autentifikasi
+token <- create_token(
+  app = "New Research Methodology",
+  consumer_key = "Masukkan Consumer Key",
+  consumer_secret = "Masukkan Consumer Secret",
+  access_token = "Masukkan Access Token",
+  access_secret = "Masukkan Access Secret")
+```
+
+### Mengambil Tweets
+
+```{r eval=FALSE, include=TRUE}
+# Streaming data
+stream_tweets(Keyword, timeout = 60 * 60 * 24 * 7, file_name = "crawling.json", 
+              parse = FALSE)
+
+# Membuat data frame
+streaming <- parse_stream("crawling.json")
+
+# Melihat hasil streaming
+View(streaming)
+```
+
+### Menyimpan Hasil Streaming
+
+```{r eval=FALSE, include=TRUE}
+# Menyimpan data Tweets 
+write_as_csv(streaming, here("data", "temporary", "hasil-streaming.csv"), 
+             prepend_ids = TRUE, na = "", fileEncoding = "UTF-8")
+
+```

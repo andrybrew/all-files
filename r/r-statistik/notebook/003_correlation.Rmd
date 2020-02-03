@@ -1,0 +1,183 @@
+---
+title: "Korelasi Pearson"
+author: "Dian Ramadhani"
+date: "08/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Korelasi Pearson
+
+Korelasi Pearson memiliki nilai antara nilai -1 sampai dengan 1. Semakin mendekati 1 maka korelasi semakin kuat sedangkan semakin mendekati nol maka korelasi antara dua variabel semakin rendah.
+
+Tanda koefisien korelasi menunjukkan arah hubungan. Tanda negatif (-) menunjukkan hubungan yang berkebalikan. Tanda (+) menunjukkan hubungan yang searah. Berkebalikan artinya semakin meningkat nilai suatu variabel maka variabel lainnya semakin menurun. Searah artinya semakin meningkat nilai suatu variabel maka variabel lainnya ikut meningkat.
+
+### Install Packages
+
+Paket merupakan gabungan kode, data, dokumentasi, dan tes, yang telah dibuat oleh suatu pihak. Paket yang telah dibuat dapat digunakan oleh orang lain. Sebagian besar paket tidak tersedia secara otomatis di R sehingga perlu untuk dilakukan tindakan penginstalan.
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("readr") # membaca file
+install.packages("psych") # analisis statistik
+install.packages("here") # menampilkan direktori
+```
+
+### Import Library
+
+Setelah paket diinstal, paket tersebut tidak secara otomatis aktif. Dengan demikian, paket yang telah diinstal selanjutnya akan diaktifkan melalui perintah berikut.
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(readr)
+library(psych)
+library(here)
+```
+
+### Menampilkan Direktori
+
+Apabila ingin mengetahui lokasi pekerjaan saat ini, dapat dilakukan dengan perintah here().
+
+```{r}
+# Mengetahui direktori proyek
+here()
+```
+
+Misalnya, pada perangkat ini, pekerjaan berada di direktori
+"C:/Users/Dhito/Desktop/r_statistik/r_statistik"
+
+### Import Data
+
+Langkah pertama yang dilakukan setelah mempersiapkan paket yaitu mengimpor data yang akan digunakan.
+
+Data dicari dengan menggunakan here("folder", "subfolder", "file.csv)
+
+"C:/Users/Dhito/Desktop/r_statistik/r_statistik" telah diwakili oleh perintah "here"
+
+Data yang akan diimpor bernama "correlation_salary.csv".
+
+Terletak di folder "C:/Users/Dhito/Desktop/r_statistik/r_statistik/data/raw".
+
+Dengan demikian, data tsb dapat kita impor dengan perintah sebagai berikut:
+
+```{r}
+# Mengimport data
+df.salary <- read_csv(here("data", "raw", "correlation_salary.csv"))
+```
+
+Data ini berisi empat variabel yaitu lamanya bekerja (yearsexperience), skor ketidakhadiran (absencescore), skor kegagalan (failurescore), dan jumlah gaji (salary).
+
+Data "correlation_salary.csv" diimpor sebagai tabel bernama "df.salary".
+
+Pada pekerjaan kali ini, kita akan menghitung nilai korelasi antar variabel, memvisualisasikan hasil korelasi, hingga menyimpan hasil.
+
+### Eksplorasi Data
+
+Data yang telah diimpor selanjutnya dieksplorasi terlebih dahulu untuk mengetahui strukturnya.
+
+```{r}
+# Menampilkan nama kolom
+names(df.salary)
+
+# Menampilkan beberapa data teratas
+head(df.salary)
+```
+
+Tabel "df.salary" memiliki kolom dengan nama yearsexperience, absencescore, failurescore, dan salary.
+
+```{r}
+# Menampilkan dimensi tabel
+dim(df.salary)
+```
+
+Tabel "df.salary" memiliki dimensi 30 baris dan 4 kolom.
+
+```{r}
+# Menampilkan struktur data
+str(df.salary)
+```
+
+"df.salary" merupakan data dengan kelas tabel (atau ‘spec_tbl_df’, ‘tbl_df’, ‘tbl’ and 'data.frame'). Keempat variabel didalamnya termasuk dalam jenis data numerik.
+
+```{r}
+# Menampilkan rangkuman data
+summary(df.salary)
+```
+
+Perintah ini menampilkan nilai minimum, Q1, median, mean, Q3, dan maksimum dari masing - masing variabel.
+
+```{r}
+# Mengetahui jumlah data kosong
+sum(is.na(df.salary))
+```
+
+Tabel "df.salary" tidak memiliki data kosong.
+
+Jika terdapat data kosong, maka baris dengan data tsb dapat dihilangkan dengan perintah berikut.
+
+```{r}
+# Mengetahui baris dengan data kosong
+which(is.na(df.salary))
+
+# Menghilangkan baris dengan data kosong
+df.salary2 <- na.omit(df.salary)
+```
+
+### Menghitung Korelasi
+
+Setelah mengeksplorasi data dan memastikan bahwasannya data sudah layak untuk dioleh, kita dapat melakukan perhitungan nilai korelasi melalui perintah berikut.
+
+```{r}
+# Menghitung korelasi
+correlation <- cor(df.salary, method = "pearson") # lainnya "kendall" "spearman")
+
+# Menampilkan hasil perhitungan korelasi
+correlation
+
+# Menampilkan hasil perhitungan korelasi dalam bentuk tabel
+df.correlation <- data.frame(correlation)
+View(df.correlation)
+```
+
+Menampilkan hasil korelasi pearson antar empat variabel pada tabel "df.salary"
+
+### Visualisasi Korelasi
+
+Selain itu, kita juga dapat memvisualisasikan hasil perhitungan korelasi melalui perintah berikut.
+
+```{r}
+# Visualisasi korelasi
+pairs.panels(df.salary, method = "pearson") # lainnya "kendall" "spearman")
+```
+
+### Tes Korelasi
+
+Tes korelasi antara variabel "absencescore" pada "df.salary" dan "failurescore" pada "df.salary" ditampilkan melalui perintah berikut.
+
+Tes dapat dilakukan secara two.sided, less, maupun greater.
+
+Tes dapat dilakukan dengan metode korelasi pearson, kendall, atau spearman.
+
+Tes juga dapat dilakukan dengan menetapkan tingkat confidence.
+
+```{r}
+# Test korelasi
+cor.test(df.salary$absencescore, df.salary$failurescore,
+  alternative = c("two.sided", "less", "greater"),
+  method = c("pearson", "kendall", "spearman"),
+  conf.level = 0.95
+)
+```
+
+### Simpan Hasil
+
+```{r}
+# Menyimpan hasil perhitungan
+write_csv(df.correlation, here("data", "processed", "correlation_table.csv"))
+```
+

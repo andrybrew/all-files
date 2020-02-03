@@ -1,0 +1,261 @@
+---
+title: "Fungsi Dasar dalam R"
+author: "M. Rizqy Dwi Putra"
+date: "07/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Ini merupakan dokumen R Markdown yang dapat digunakan untuk membuat dokumen HTML, PDF, dan bahkan dokumen berekstensi docx.Anda dapat membuat dokumen tulisan, presentasi, dan laman web statis maupun interaktif dengan melalui R Markdown. Penggunaan R Markdown dalam proyek analisis data akan membuat alur kerja menjadi lebih mudah dan *reproducible*. Informasi lebih lanjut mengenai R Markdown dapat dilihat pada pranala (http://rmarkdown.rstudio.com)
+
+Kode R dapat dimasukan ke dalam dokumen R Markdown dengan menggunakan *chunck* yang dimulai dengan penanda  tiga *backtick*. Jika ingin menjalankan kode R dalam *chunck* tersebut, Anda dapat menggunakan pemintas Ctrl + Enter (menjalankan satu baris kode) atau Ctrl + Shift + Enter (menjalankan semua kode dalam *chunck*). Sekarang buatlah *chunck* baru yang isinya adalah baris kode R berikut: (Petunjuk: Gunakan Ctrl + Alt + I)
+
+
+# Menyimpan Data dalam Variabel
+
+Anda dapat memasukan nilai kedalam suatu variabel dengan membuat *nama variabel <- (atau =) value*. Nama variabel tidak dapat lebih dari dua kata, jika dengan dua kata maka menggunakan simbol *_*. Misalkan kita akan membuat variabel bernama latihan, berikut contohnya:
+
+```{r}
+latihan = c(10, 20, 30, 40, 20)
+latihan
+```
+
+
+# Mengakses Nilai Data dalam Variabel secara Individual
+Andaikan hanya ingin ditampilkan nilai dari variabel latihan pada posisi ke-3, yakni nilai 30. Perhatikan kode R berikut.
+
+```{r}
+latihan[3]
+
+#menampilkan nilai dalam variabel latihan pada posisi ke 1, 3, dan 4
+latihan[c(1,3,4)]
+
+#menampilkan nilai dalam variabel latihan pada posisi ke-2, sampai posisi ke-4
+latihan[2:4]
+```
+
+
+# Mengubah Nilai Data dalam Variabel
+Pada pemaparan sebelumnya, diketahui variabel latihan menyimpan nilai 10, 20, 30, 40 dan 20. Andaikan nilai dari variabel latihan pada posisi ke-3, yakni nilai 30, akan diubah menjadi 100. Perhatikan kode R berikut.
+
+```{r}
+latihan[3]=100
+latihan
+```
+
+
+# Menghapus Nilai Data dalam Variabel
+Misalkan suatu variabel bernama NILAI menyimpan 5 nilai, yakni 10, 40, 45, 30, dan 80. Jika nilai 45 pada variabel NILAI akan dihapus, sehingga nilai dalam variabel NILAI menjadi 10, 40, 30, dan 80. Diketahui nilai 45 berada pada posisi atau indeks ke-3. Berikut kode R untuk menghapus nilai 45 dalam variabel NILAI.
+
+```{r}
+NILAI=c(10, 40, 45, 30, 80)
+NILAI
+NILAI=NILAI[-3]
+NILAI
+```
+
+# Penggunaan Operator > (Lebih Besar Dari)
+Misalkan suatu variabel bernama NILAI menyimpan 10 nilai, yakni 100, 95, 70, 80, 25, 60, 80, 60, 55, 90. Jika akan ditampilkan nilai dari variabel NILAI dengan syarat lebih besar dari 80, yakni 100, 95, 90. Berikut kode dalam R.
+
+```{r}
+NILAI=c(100, 95, 70, 80, 25, 60, 80, 60, 55, 90)
+NILAI
+NILAI[NILAI>80]
+```
+
+# Penggunaan Operator & (Dan)
+Misalkan akan ditampilkan nilai dari variabel NILAI dengan syarat lebih besar 60 dan lebih kecil 80, yakni 70. Berikut disajikan kode R.
+
+```{r}
+NILAI
+NILAI[NILAI>60&NILAI<80]
+```
+
+# Penggunaan Operator | (Atau)
+Misalkan akan ditampilkan nilai dari variabel NILAI dengan syarat lebih besar 80 atau lebih kecil 30, yakni 100, 95, 25, 90. Berikut disajikan kode R.
+
+```{r}
+NILAI
+NILAI[NILAI>80 | NILAI<30]
+```
+
+# Menghapus berdasarkan kriteria
+Misalkan nilai-nilai yang lebih kecil atau sama dengan 90 akan dihapus dari variabel NILAI, sehingga nilai-nilai yang tersimpan dalam variabel NILAI adalah 100 dan 95. Berikut kode dalam R.
+
+```{r}
+NILAI
+NILAI=NILAI[NILAI>90]
+```
+
+# Jenis Data pada R
+Berikut merupakan berbagai jenis dari jenis data dalam R.
+ Numeric atau angka
+ Character atau karakter
+ Logical atau logika
+ Function atau fungsi
+
+Untuk mengetahui jenis dari suatu data dalam R, digunakan perintah mode. Berikut merupakan kode R untuk mengetahui jenis data.
+
+```{r}
+mode(1000)
+```
+
+# Arithmetic with R
+Dalam bentuknya yang paling dasar, R dapat digunakan sebagai kalkulator sederhana. Berikut operator aritmatika yang paling umum digunakan:
+
+Penjumlahan: +
+Penurangan: -
+Perkalian: *
+Pembagian: /
+Pangkat: ^
+Modulo: %%
+
+```{r}
+28%%6
+```
+
+# Vektor
+Vektor adalah array satu dimensi yang dapat menampung data numerik, data karakter, atau data logis. Dengan kata lain, vektor adalah alat sederhana untuk menyimpan data.Untuk membuat vektor dapat menggunakan code *c()*
+
+Dalam R, fungsi c digunakan untuk menggabungkan satu nilai data, dengan nilai data lainnya. Berikut contohnya:
+
+```{r}
+numeric_vector <- c(1, 10, 49)
+character_vector <- c("a", "b", "c")
+
+numeric_vector
+character_vector
+```
+
+```{r}
+#Anda bisa melakukan perhitungan artitmetika dengan vektor
+# Create the vectors
+vect_1 <- c(1, 3, 5)
+vect_2 <- c(2, 4, 6)
+# Take the sum of A_vector and B_vector
+sum_vect <- vect_1 + vect_2
+# Print out total_vector
+sum_vect
+```
+
+Anda juga dapat memberi nama pada elemen yang ada dalam halaman vektor dengan menggunakan code *names()*
+
+```{r}
+some_vector <- c("John Doe", "poker player")
+names(some_vector) <- c("Name", "Profession")
+some_vector
+```
+
+# Matrix
+Matriks adalah array 2 dimensi yang memiliki jumlah baris m dan jumlah kolom. Dengan kata lain, matriks adalah kombinasi dari dua vektor atau lebih dengan tipe data yang sama.
+
+```{r}
+#Buat sebuah matriks dengan 5 baris yang berisi angka 1 hingga 10 dan byrow = TRUE
+matrix_a <-matrix(1:10, byrow = TRUE, nrow = 5)
+matrix_a
+
+#Bangun sebuah matriks dengan 5 baris yang berisi angka 1 hingga 10 dan byrow = FALSE
+matrix_b <-matrix(1:10, byrow = FALSE, nrow = 5)
+matrix_b
+
+#Kita juga bisa membuat matriks 4x3 menggunakan ncol
+matrix_c <-matrix(1:12, byrow = FALSE, ncol = 3)
+matrix_c
+```
+
+# Data Frame
+Data Frame adalah daftar vektor yang panjangnya sama. Matriks hanya berisi satu jenis data, sementara data frame menerima tipe data yang berbeda (numerik, karakter, faktor, dll).
+
+```{r}
+# Create a, b, c, d variables
+a <- c(10,20,30,40)
+b <- c('book', 'pen', 'textbook', 'pencil_case')
+c <- c(TRUE,FALSE,TRUE,FALSE)
+d <- c(2.5, 8, 10, 7)
+
+# Join the variables to create a data frame
+df <- data.frame(a,b,c,d)
+df
+
+# Name the data frame
+names(df) <- c('ID', 'items', 'store', 'price')
+df
+```
+
+Anda juga dapat menambahkan kolom ke Data frame. Anda perlu menggunakan simbol $ untuk menambahkan variabel baru.
+
+```{r}
+# Create a new vector
+quantity <- c(10, 35, 40, 5)
+
+# Add `quantity` to the `df` data frame
+df$quantity <- quantity
+df
+```
+
+# Fungsi Length
+Fungsi length dalam R berfungsi untuk mengetahui jumlah elemen yang tersimpan dalam variabel. Misalkan suatu variabel bernama A menyimpan nilai 100, 70, 80, 55, 80, 70, 80. Maka banyaknya elemen dalam variabel A adalah 7. Berikut merupakan kode R untuk menentukan banyaknya elemen yang terkandung dalam variabel A.
+
+```{r}
+A=c(100,70,80,55,80,70,80)
+length(A)
+```
+
+# Fungsi max dan min
+Fungsi max dalam R berfungsi untuk menentukan nilai maksimum dalam data. Sementara fungsi min dalam R berfungsi untuk menentukan nilai minimum dalam data. Misalkan diberikan data 10,25,90,75, 95, 57 Berikut merupakan kode dalam R untuk menentukan nilai maksimum dan minimum dari data tersebut.
+
+```{r}
+A=c(10,25,90,75,95,57)
+max(A)
+min(A)
+```
+
+# Fungsi options
+Diketahui nilai pi adalah 3.141593… Misalkan hanya ingin ditampilkan 3 digit angka dari nilai pi, yakni 3.14. Berikut perintah dalam R untuk menampilkan hanya 3 digit angka dari bilangan pi.
+
+```{r}
+options(digits=3)
+pi
+```
+
+# Fungsi table
+Fungsi table dalam R berfungsi untuk menyajikan data dalam bentuk tampilan tabel. Misalkan suatu variabel bernama A menyimpan data 10, 10, 30, 10, 30, 10, 10, 40, 40,70, 90, 70, 80, 60, 60, 90. Berikut merupakan perintah atau kode R untuk menyajikan data pada variabel A dalam tabel.
+
+```{r}
+A=c(10, 10, 30, 10, 30, 10, 10, 40, 40,70, 90, 70, 80, 60, 60, 90)
+table(A)
+
+
+#Penyajian secara tabel juga dapat disajikan dengan menampilkan informasi proporsi. Berikut merupakan perintah atau kode R untuk menyajikan tabel dengan informasi proporsi.
+
+A=c(10, 10, 30, 10, 30, 10, 10, 40, 40,70, 90, 70, 80, 60, 60, 90)
+table(A)/length(A)
+```
+
+# Fungsi Factor
+
+Fungsi factor dalam R berfungsi untuk mengetahui keragaman level atau faktor dalam suatu data. Misalkan diberikan data sebagai berikut.
+
+ikan, ikan, udang, ikan, udang, ikan, ikan, udang
+
+Berdasarkan data tersebut, terdapat dua faktor, yakni ikan dan udang. Misalkan diberikan data sebagai berikut.
+
+```{r}
+coba <- c("ikan", "ikan", "udang", "ikan", "udang", "ikan", "ikan", "udang")
+factor(coba)
+```
+
+
+# Fungsi Barplot
+Fungsi barplot dalam R berfungsi untuk menyajikan data dalam bentuk diagram batang. Misalkan variabel A menyimpan data 10, 10, 10, 10, 20, 20, 30, 30, 30, 30, 30, 30. Berikut akan disajikan data pada variabel A dalam bentuk diagram batang.
+
+```{r}
+A=c(10, 10, 10, 10, 20, 20, 30, 30, 30, 30, 30, 30)
+barplot(table(A))
+```
+
+Setelah selesai membuat dokumen R Markdown yang berisikan konten tulisan beserta kode R, Anda dapat klik tombol **Knit** untuk menghasilkan dokumen baru sesuai dengan format dokumen yang diinginkan. Dalam contoh ini format dokumen keluaran R Markdown setelah menjalankan **Knit** adalah dokumen HTML

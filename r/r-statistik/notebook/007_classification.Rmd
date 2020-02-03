@@ -1,0 +1,186 @@
+---
+title: "Classification"
+author: "Dian Ramadhani"
+date: "08/01/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Classification
+
+Klasifikasi adalah suatu pengelompokan data dimana data yang digunakan tersebut mempunyai kelas label atau target. Model yang diperoleh digunakan untuk memprediksi kelas dari data baru. Model klasifikasi dapat dibuat dengan berbagai algoritma seperti Decision Tree, Naive Bayes, K-NN, dll.
+
+### Install Packages
+
+```{r eval=FALSE, include=TRUE}
+# Menginstall package(s)
+install.packages("readr") # membaca file
+install.packages("here") # menampilkan direktori
+install.packages("rpart") # algoritma decision tree
+install.packages("rpart.plot") # visualisasi decision tree
+install.packages("naivebayes") # algoritma naivebayes
+```
+
+### Import Library
+
+Setelah paket diinstal, paket tersebut tidak secara otomatis aktif. Dengan demikian, paket yang telah diinstal selanjutnya akan diaktifkan melalui perintah berikut.
+
+```{r message=FALSE, warning=FALSE}
+# Mengaktifkan package(s)
+library(readr)
+library(here)
+library(rpart)
+library(rpart.plot)
+library(naivebayes)
+```
+
+### Menampilkan Direktori
+
+```{r eval=FALSE, include=TRUE}
+# Mengetahui direktori proyek
+here()
+```
+
+### Import Data
+
+```{r}
+# Mengimport data
+df.insurance <- read_csv(here("data", "raw", "classification_insurance.csv"))
+```
+
+Data yang digunakan yaitu data asuransi. Data ini berisi tentang profil calon konsumen perusahaan asuransi dan keputusan pengambilan asuransi yang diambil masing masing orang. Data ini kemudian akan digunakan untuk memprediksi kecenderungan keputusan yang diambil oleh calon konsumen lainnya berdasarkan profil yang Ia miliki. 
+
+### Eksplorasi Data
+
+Data yang telah diimpor selanjutnya dieksplorasi untuk mengetahui strukturnya.
+
+```{r}
+# Melihat attribute dan struktur data
+names(df.insurance) # menampilkan nama kolom
+dim(df.insurance) # menampilkan dimensi tabel
+head(df.insurance) # menampilkan beberap data teratas
+str(df.insurance) # menampilkan struktur data
+summary(df.insurance) # menampilkan rangkuman data
+
+# Mengetahui jumlah data kosong
+sum(is.na(df.insurance))
+```
+
+### Membagi Data
+
+Dalam klasifikasi, data dibagi menjadi dua yaitu data train untuk membuat model dan data test untuk menguji akurasi model. Biasanya data dibagi dengan proporsi 70% train dan 30% test.
+
+```{r}
+# Membangi data
+split <- sample(1:nrow(df.insurance), 0.7 * nrow(df.insurance))
+
+# Membuat tabel data train
+df.train <- df.insurance[split, ]
+
+# Membut tabel data test
+df.test <- df.insurance[-split, ]
+```
+
+## Decision Tree
+
+Decision tree adalah salah satu metode klasifikasi yang paling populer, karena mudah untuk diinterpretasi oleh manusia. Decision tree adalah model prediksi menggunakan struktur pohon atau struktur berhirarki. Konsep dari pohon keputusan adalah mengubah data menjadi decision tree dan aturan-aturan keputusan. 
+
+### Model Building
+
+```{r}
+# Membuat model decision tree
+tree <- rpart(Claim ~ ., data = df.train)
+
+# Memvisualisasikan model decision tree
+prp(tree)
+```
+
+### Validasi
+
+```{r}
+# Memprediksi data test
+pred.tree <- predict(tree, df.test, type = "class")
+
+# Melihat prediksi dalam bentuk tabel
+df.pred.tree <- data.frame(df.test, pred.tree)
+View(df.pred.tree)
+```
+
+```{r}
+# Confussion matrix
+conf.tree <- table(df.test$Claim, pred.tree)
+conf.tree
+
+# Megambil angka TP, FN, FP, TN
+TP.tree <- conf.tree[1, 1]
+FN.tree <- conf.tree[1, 2]
+FP.tree <- conf.tree[2, 1]
+TN.tree <- conf.tree[2, 2]
+
+# Menghitung nilai akurasi
+acc.tree <- (TP.tree + TN.tree) / (TP.tree + FN.tree + FP.tree + TN.tree)
+acc.tree
+
+# Menghitung nilai presisi
+prec.tree <- TP.tree / (TP.tree + FP.tree)
+prec.tree
+
+# Menghitung Nilai Recall
+rec.tree <- TP.tree / (TP.tree + FN.tree)
+rec.tree
+```
+
+## Naive Bayes
+
+Naive bayesian klasifikasi adalah suatu klasifikasi berpeluang sederhana berdasarkan aplikasi teorema Bayes dengan asumsi antar variabel penjelas saling bebas (independen). Dalam hal ini, diasumsikan bahwa kehadiran atau ketiadaan dari suatu kejadian tertentu dari suatu kelompok tidak berhubungan dengan kehadiran atau ketiadaan dari kejadian lainnya.
+
+### Model Building
+
+```{r}
+# Membuat model naive bayes
+nb <- naive_bayes(Claim ~ ., data = df.train)
+nb
+
+# Memvisualisasikan model naive bayes
+plot(nb)
+```
+
+### Validasi
+
+```{r}
+# Memprediksi data test
+pred.nb <- predict(nb, df.test)
+
+# Melihat prediksi dalam bentuk tabel
+df.pred.nb <- data.frame(df.test, pred.nb)
+View(df.pred.nb)
+```
+
+```{r}
+# Confussion matrix
+conf.nb <- table(df.test$Claim, pred.nb)
+conf.nb
+
+# Megambil angka TP, FN, FP, TN
+TP.nb <- conf.nb[1, 1]
+FN.nb <- conf.nb[1, 2]
+FP.nb <- conf.nb[2, 1]
+TN.nb <- conf.nb[2, 2]
+
+# Menghitung nilai akurasi
+acc.nb <- (TP.nb + TN.nb) / (TP.nb + FN.nb + FP.nb + TN.nb)
+acc.nb
+
+# Menghitung nilai presisi
+prec.nb <- TP.nb / (TP.nb + FP.nb)
+prec.nb
+
+# Menghitung Nilai Recall
+rec.nb <- TP.nb / (TP.nb + FN.nb)
+rec.nb
+```

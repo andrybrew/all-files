@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><process version="9.0.000-BETA">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="9.0.000-BETA" expanded="true" name="Process">
+    <process expanded="true">
+      <operator activated="true" class="text:create_document" compatibility="8.1.000" expanded="true" height="68" name="Create Document" width="90" x="112" y="34">
+        <parameter key="text" value="saya sangat senang dengan kalian-kalian, tampilannya dan suaranya sangat bagus&#10;"/>
+      </operator>
+      <operator activated="true" class="text:process_documents" compatibility="8.1.000" expanded="true" height="103" name="Process Documents" width="90" x="447" y="34">
+        <parameter key="vector_creation" value="Term Occurrences"/>
+        <parameter key="keep_text" value="true"/>
+        <process expanded="true">
+          <operator activated="true" class="text:tokenize" compatibility="8.1.000" expanded="true" height="68" name="Tokenize" width="90" x="179" y="34">
+            <parameter key="mode" value="specify characters"/>
+            <parameter key="characters" value=", "/>
+          </operator>
+          <operator activated="true" class="operator_toolbox:create_exampleset" compatibility="1.2.000" expanded="true" height="68" name="Create ExampleSet" width="90" x="179" y="136">
+            <parameter key="generator_type" value="comma_separated_text"/>
+            <list key="function_descriptions"/>
+            <list key="numeric_series_configuration"/>
+            <list key="date_series_configuration"/>
+            <list key="date_series_configuration (interval)"/>
+            <parameter key="input_csv_text" value="dictionary&#10;kalian:kalian.*&#10;tampil:tampil.*&#10;suara:suara.*"/>
+          </operator>
+          <operator activated="true" class="operator_toolbox:stem_tokens_using_exampleset" compatibility="1.2.000" expanded="true" height="82" name="Stem Tokens Using ExampleSet" width="90" x="514" y="34">
+            <parameter key="attribute" value="dictionary"/>
+          </operator>
+          <connect from_port="document" to_op="Tokenize" to_port="document"/>
+          <connect from_op="Tokenize" from_port="document" to_op="Stem Tokens Using ExampleSet" to_port="document"/>
+          <connect from_op="Create ExampleSet" from_port="output" to_op="Stem Tokens Using ExampleSet" to_port="example set"/>
+          <connect from_op="Stem Tokens Using ExampleSet" from_port="document" to_port="document 1"/>
+          <portSpacing port="source_document" spacing="0"/>
+          <portSpacing port="sink_document 1" spacing="0"/>
+          <portSpacing port="sink_document 2" spacing="0"/>
+        </process>
+      </operator>
+      <connect from_op="Create Document" from_port="output" to_op="Process Documents" to_port="documents 1"/>
+      <connect from_op="Process Documents" from_port="example set" to_port="result 1"/>
+      <connect from_op="Process Documents" from_port="word list" to_port="result 2"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+      <portSpacing port="sink_result 2" spacing="0"/>
+      <portSpacing port="sink_result 3" spacing="0"/>
+    </process>
+  </operator>
+</process>
